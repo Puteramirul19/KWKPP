@@ -1,0 +1,79 @@
+<?php
+/**
+ * textField - is common input field (type=text)
+ *
+ * @package rapyd.components.fields
+ * @author Felice Ostuni
+ * @license http://www.fsf.org/licensing/licenses/lgpl.txt LGPL
+ * @version 0.9.6
+ */
+ 
+ 
+ /**
+ * textField
+ *
+ * @package    rapyd.components.fields
+ * @author     Felice Ostuni
+ * @access     public
+ */
+class browseField extends objField{
+
+  var $type = "file";
+  
+  var $css_class = "input";
+
+  function _getValue(){
+    parent::_getValue();
+  }
+  
+  function _getNewValue(){
+    parent::_getNewValue();
+  }
+
+/*  function build(){
+    if(!isset($this->size)){
+      $this->size = 45;
+    }
+    $this->_getValue();
+    */
+    
+	//$output = '<input type="file" name="'.form_prep($this->name).'">';
+   // name="userfile" type="file" class="box" id="userfile"
+  function build(){
+
+  var $type = "file";
+  
+
+  function _getValue(){
+  }
+  
+  function _getNewValue(){
+  }
+
+  function build(){
+    
+    $output = "";
+    
+    switch ($this->status){
+    
+      case "disabled":
+      case "show":
+        break;
+
+      case "create":
+      case "modify":
+
+                  
+        $output = '<input type="file" value="'.form_prep($this->label).'">';//ci do not have form helper for resets
+        break;
+        
+      case "hidden":
+        break;
+        
+      default:
+    }
+    $this->output = "\n".$output."\n";
+  }
+    
+}
+?>

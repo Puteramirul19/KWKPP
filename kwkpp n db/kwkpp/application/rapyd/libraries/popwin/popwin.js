@@ -1,0 +1,34 @@
+// JavaScript Document
+
+var showMsg = navigator.userAgent != "Mozilla/4.0 (compatible; MSIE 4.0; Mac_PowerPC)";
+
+function dmim(msgStr) {
+	document.returnValue = false;
+	if (showMsg) { 
+		window.status = msgStr;
+		document.returnValue = true;
+	}
+}
+
+browserType=navigator.appName.charAt(0)+navigator.appVersion.charAt(0)
+
+function popwin(URL,lebar,tinggi,menubar) {
+	
+	if (browserType=="N2") {
+		siteWindow=window.open("","","toolbar=0,location=0,directories=0,status=0,menubar="+menubar+",scrollbars=1,resizable=1,width="+lebar+",height="+tinggi);
+		siteWindow.opener=self;
+		siteWindow=URL
+	}
+	
+	if (browserType.charAt(0)=="M") {
+		siteWindow=window.open(URL,"","toolbar=0,location=0,directories=0,status=0,menubar="+menubar+",scrollbars=1,resizable=1,width="+lebar+",height="+tinggi);
+		siteWindow.opener=self;
+	}
+	
+	else {
+		siteWindow=window.open(URL,"","toolbar=0,location=0,directories=0,status=0,menubar="+menubar+",scrollbars=1,resizable=1,width="+lebar+",height="+tinggi);
+		siteWindow.opener=self;
+	}
+	
+	setTimeout("siteWindow.focus();",200);
+}

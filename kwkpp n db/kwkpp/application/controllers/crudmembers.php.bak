@@ -1,0 +1,369 @@
+<?php
+require_once('basecontroller.php');
+
+class Crudmembers extends BaseController {
+
+  var $data_type = null;   
+  var $data = null;
+
+
+	function Crudmembers()
+	{
+
+		parent::BaseController(); 
+
+	}
+
+
+
+  ##### index #####
+  function index()
+  {
+	if(is_logged() && get_role()<='3')
+	{
+		    
+    redirect("crudmembers/filteredgrid");
+
+	}else{redirect("auth/login");}
+  }
+
+
+
+  ##### callback test (for DataFilter + DataGrid) #####
+  function test($id,$const)
+  {
+    //callbacktest//
+    return $id*$const;
+    //endcallbacktest//
+  }
+
+
+
+  ##### DataFilter + DataGrid #####
+  function filteredgrid()
+  {
+	if(is_logged() && get_role()<='3')
+	{
+     
+    //filteredgrid//
+    
+    $this->rapyd->load("datafilter","datagrid");
+    
+    $this->rapyd->uri->keep_persistence();
+    
+    //filter
+    $filter = new DataFilter("Carian Ahli");
+    //$filter->db->select("*, concat(jenisAhliCode,ahliKhairatID) as 'jenisAhliCodeahliKhairatID', concat(jenisAhliCode,noAhli) as 'jenisAhliCodeNoAhli'");
+    $filter->db->select("*, concat('AB',noAhliAB) as 'noAhliAB', concat('SH',noAhliSH) as 'noAhliSH', date_format(kwkpp_ahli_khairat.tarikhMasuk, '%d/%m/%Y') as 'rd'");
+	$filter->db->from("kwkpp_ahli_khairat");
+    $filter->db->join("kwkpp_jenis_ahli","kwkpp_jenis_ahli.jenisAhliID=kwkpp_ahli_khairat.jenisAhliID","LEFT");
+	$filter->db->join("kwkpp_jenis_pekerja","kwkpp_jenis_pekerja.jenisPekerjaCode=kwkpp_ahli_khairat.jenisPekerjaCode","LEFT");
+
+	$filter->nama = new inputField("Nama", "nama");
+    $filter->noPekerja = new inputField("No Pekerja", "noPekerja");
+    $filter->noIC = new inputField("No IC", "noIC");
+
+ 	$filter->jenisAhliID = new dropdownField("Jenis Ahli", "kwkpp_ahli_khairat.jenisAhliID");
+    $filter->jenisAhliID->option("",""); 
+    $filter->jenisAhliID->options("select jenisAhliID, concat(jenisAhliCode, ' - ', jenisAhliDesc) from kwkpp_jenis_ahli");
+ 
+ 	/*$filter->statusAhli = new dropdownField("Status Ahli", "statusAhli");
+    $filter->statusAhli->option("",""); 
+    $filter->statusAhli->options(array("A"=>"Aktif", "M"=>"Meninggal Dunia", "P"=>"Bersara", "B"=>"Berhenti", "T"=>"Perkhidmatan Ditamatkan"));*/
+
+	$filter->statusAhli = new dropdownField("Status Ahli", "kwkpp_ahli_khairat.statusAhli");
+    $filter->statusAhli->option("",""); 
+    $filter->statusAhli->options("select statusAhliCode, concat(statusAhliCode, ' - ', statusAhliDesc) from kwkpp_status_ahli");
+
+	$filter->jenisPekerjaCode = new dropdownField("Jenis Pekerja", "kwkpp_ahli_khairat.jenisPekerjaCode");
+    $filter->jenisPekerjaCode->option("",""); 
+    $filter->jenisPekerjaCode->options("select jenisPekerjaCode, jenisPekerjaDesc from kwkpp_jenis_pekerja");
+
+    $filter->buttons("reset","search");
+    $filter->build();
+	//$uri_bayar = "crudpaybill/dataedit/create/<#ahliKhairatID#>/<#tahun#>/<#bulan#>/<#jenisBilCode#>/<#amaun_bil#>";
+    $uri = "crudmembers/dataedit/show/<#ahliKhairatID#>";
+	$uri_mati = "cruddecease/dataedit/create/<#ahliKhairatID#>";
+    $popup_uri = "membercert2/dataedit/show/<#ahliKhairatID#>";
+	$popup_uri02 = "membercert02/dataedit/show/<#ahliKhairatID#>";
+	$uri_penama = "crudbeneficiaries/dataedit/create/<#ahliKhairatID#>";
+	$uri_penyata = "crudaccount/index/<#ahliKhairatID#>";
+    //grid
+    $grid = new DataGrid("Senarai Ahli");
+    //$grid->use_function("callback_test");
+    $grid->order_by("noPekerja","asc");
+    $grid->per_page = 25;
+    $grid->use_function("substr");
+
+    $grid->column_detail("No Pekerja", "noPekerja", $uri);
+
+	$grid->column("No Ahli AB", "noAhliAB");  
+
+	$grid->column("No Ahli SH", "noAhliSH");
+	
+	$grid->column_detail("No IC <br><font class=\"alert\">(klik untuk cetak sijil)</font>", "noIC", $popup_uri);
+    //$grid->column_detail_popwin("Nama","<substr><#nama#>|0|25</substr>", $popup_uri,"1000","500","1");
+	$grid->column_detail("Nama <br><font class=\"alert\">(klik untuk daftar mati)</font>","nama", $uri_mati);
+ 
+	$grid->column_detail("Status Ahli <br><font class=\"alert\">(klik untuk tambah penama)</font>", "statusAhli", $uri_penama);
+
+	$grid->column_detail("Tarikh Masuk <br><font class=\"alert\">(klik untuk penyata akaun)</font>", "tarikhMasuk", $uri_penyata);
+
+	//$grid->column("Status Ahli", "statusAhli");
+    
+	$grid->add("crudmembers/dataedit/create");
+    $grid->build();
+    /**/
+    $data["crud"] = $filter->output . $grid->output;
+    
+    //endfilteredgrid//
+    
+    
+    
+    $this->_render("crud", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"filteredgrid", "title"=>"Filtered Grid"),
+                     // array("file"=>THISFILE, "id"=>"callbacktest", "title"=>"Callback Test"),
+                    )
+                  );
+	}else{redirect("auth/login");}
+  }
+  
+  
+  ##### dataedit #####
+  function dataedit()
+  {  
+	if(is_logged() && get_role()<='3')
+	{
+
+    if (($this->uri->segment(5)==="1") && ($this->uri->segment(4)==="do_delete")){
+      show_error("Please do not delete the first record, it's required by DataObject sample");
+    }
+
+if($this->uri->segment(5)==="show" || $this->uri->segment(3)==="show" || $this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify")
+	{
+	$this->rapyd->load("dataobject");
+	$do = new DataObject("kwkpp_ahli_khairat");
+    $do->rel_one_to_one("kodJenisAhli", "kwkpp_jenis_ahli","jenisAhliID");
+    
+	if($this->uri->segment(5)==="show" || $this->uri->segment(5)==="modify" )
+		{$ahliID = intval($this->uri->segment(6));}
+	elseif($this->uri->segment(3)==="show" || $this->uri->segment(3)==="modify")
+		{$ahliID = intval($this->uri->segment(4));}
+	$do->load($ahliID);
+    $kod = $do->get_all();
+
+	$do2 = new DataObject("kwkpp_ahli_khairat");
+	$do2->load($ahliID);
+    $noahli = $do2->get_all();
+	
+	$data["jenisAhliCode"] = $kod["kodJenisAhli"]["jenisAhliCode"].$noahli["ahliKhairatID"];
+
+	}	
+
+if($this->uri->segment(5)==="show" || $this->uri->segment(3)==="show" || $this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify")
+	{
+	$this->rapyd->load("dataobject");
+	$do = new DataObject("kwkpp_ahli_khairat");
+    $do->rel_one_to_one("kodJenisAhli", "kwkpp_jenis_ahli","jenisAhliID");
+    
+	if($this->uri->segment(5)==="show" || $this->uri->segment(5)==="modify" )
+		{$ahliID = intval($this->uri->segment(6));}
+	elseif($this->uri->segment(3)==="show" || $this->uri->segment(3)==="modify")
+		{$ahliID = intval($this->uri->segment(4));}
+	$do->load($ahliID);
+    $kod = $do->get_all();
+
+	if($kod["noAhliAB"]<>'')
+		{$data["AB"]= "AB".$kod["noAhliAB"];}
+	else
+		{$data["AB"]="<i>[ TIADA ]</i>";}
+
+	if($kod["noAhliSH"]<>'')
+		{$data["SH"]= "SH".$kod["noAhliSH"];}
+	else
+		{$data["SH"]="<i>[ TIADA ]</i>";}
+
+	//$do2 = new DataObject("kwkpp_ahli_khairat");
+	//$do2->load($ahliID);
+    //$noahli = $do2->get_all();
+	
+	//$data["jenisAhliCodeNoAhli"] = $kod["kodJenisAhli"]["jenisAhliCode"].$noahli["noAhli"];
+
+	}
+
+    //dataedit//
+    $this->rapyd->load("dataedit");
+
+    $edit = new DataEdit("Maklumat Ahli", "kwkpp_ahli_khairat");
+	
+    $edit->back_uri = "crudmembers/filteredgrid";
+
+	//$edit->browse = new uploadField("Browse", "browse");
+
+	$edit->noPekerja = new inputField("No Pekerja", "noPekerja");
+    $edit->noPekerja->rule = "trim|required|max_length[10]|unique";
+	if($this->uri->segment(5)==="show" || $this->uri->segment(3)==="show" || $this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify")
+	{
+	$edit->free = new freeField("No Ahli Biasa","free",$data["AB"]);  
+	}
+
+	if($this->uri->segment(5)==="show" || $this->uri->segment(3)==="show" || $this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify")
+	{
+	$edit->noAhli = new freeField("No Ahli S. Hidup","free",$data["SH"]);  
+	}
+
+	$edit->role = new dropdownField("Jenis Ahli", "jenisAhliID");
+    $edit->role->option("","");
+    $edit->role->options("SELECT jenisAhliID, jenisAhliDesc FROM kwkpp_jenis_ahli");
+	$edit->role->rule = "required";
+/*
+if($this->uri->segment(5)!="show")
+		{	
+	$edit->noAhli = new inputField("No Ahli", "noAhli");//$data["author"]
+    $edit->noAhli->rule = "trim|required|max_length[10]";
+		}
+*/
+	$edit->noIC = new inputField("No IC", "noIC");
+    $edit->noIC->rule = "trim|required|max_length[14]|unique";
+    
+	$edit->nama = new inputField("Nama", "nama");
+    $edit->nama->rule = "trim|required|max_length[50]";
+
+	$edit->alamat01_ak = new inputField("Alamat", "alamat01_ak");
+	$edit->alamat01_ak->rule = "trim|max_length[100]";
+
+	$edit->alamat02_ak = new inputField("", "alamat02_ak");
+	$edit->alamat02_ak->rule = "trim|max_length[100]";
+
+	$edit->alamat03_ak = new inputField("", "alamat03_ak");
+	$edit->alamat03_ak->rule = "trim|max_length[100]";
+
+	$edit->bandar_ak = new inputField("", "bandar_ak");
+	$edit->bandar_ak->rule = "trim|max_length[50]";
+
+	$edit->poskod_ak = new inputField("Poskod", "poskod_ak");
+	$edit->poskod_ak->rule = "trim|max_length[5]|numeric";
+
+	$edit->negeri_ak = new dropdownField("Negeri", "negeri_ak");
+    $edit->negeri_ak->option("","");
+    $edit->negeri_ak->options("SELECT negeriCode, negeriDesc FROM kwkpp_negeri");
+
+	$edit->statusAhli = new dropdownField("Status Ahli", "statusAhli");
+    $edit->statusAhli->option("","");
+    $edit->statusAhli->options("SELECT statusAhliCode, statusAhliDesc FROM kwkpp_status_ahli");
+	$edit->statusAhli->rule = "required";
+	$edit->statusAhli->insertValue = $this->config->item('active_status');//"AK";
+
+	$edit->jenisPekerjaCode = new dropdownField("Jenis Pekerja", "jenisPekerjaCode");
+    $edit->jenisPekerjaCode->option("","");
+    $edit->jenisPekerjaCode->options("SELECT jenisPekerjaCode, jenisPekerjaDesc FROM kwkpp_jenis_pekerja");
+	//$edit->jenisPekerjaCode->rule = "required";
+	$edit->jenisPekerjaCode->insertValue = $this->config->item('pekerja_biasa');//PB
+
+	$edit->tarikhLahir = new dateField("Tarikh Lahir", "tarikhLahir","d/m/Y");
+
+	$edit->tarikhMasuk = new dateField("Tarikh Masuk", "tarikhMasuk","d/m/Y");
+	$edit->tarikhMasuk->insertValue = date("Y-m-d");
+
+	$edit->tarikhKeluar = new dateField("Tarikh Keluar", "tarikhKeluar","d/m/Y");
+//$edit->tarikhKeluar->option("onclick","auth");
+//	$edit->tarikhKeluar->mode = "readonly";
+
+	$edit->tarikhBersara = new dateField("Tarikh Bersara", "tarikhBersara","d/m/Y");
+
+	//$edit->tarikhSijil = new dateField("Tarikh Sijil", "tarikhSijil","d/m/Y");
+	//$edit->tarikhSijil->insertValue = date("Y-m-d");
+
+	$edit->kodStesenAkhir = new dropdownField("Kod Stesen Akhir", "kodStesenAkhir");
+    $edit->kodStesenAkhir->option("","");
+    $edit->kodStesenAkhir->options("SELECT stesenCode, concat(stesenCode) FROM kwkpp_stesen");//("SELECT stesenCode, stesenCode FROM kwkpp_stesen");
+
+	$edit->noSambPej = new inputField("No Sambungan Pejabat", "noSambPej");
+    $edit->noSambPej->rule = "max_length[6]";
+
+	$edit->noTelRumah = new inputField("No Telefon Rumah", "noTelRumah");
+    $edit->noTelRumah->rule = "max_length[11]";
+
+	$edit->noTelBimbit = new inputField("No Telefon Bimbit", "noTelBimbit");
+    $edit->noTelBimbit->rule = "max_length[11]";
+
+	$edit->email = new inputField("e-mail", "email");
+    $edit->email->rule = "valid_email|max_length[25]";
+
+	$edit->komen = new inputField("Komen", "komen");
+    $edit->komen->rule = "max_length[50]";
+
+/*user id log for insert and update*/
+if($this->uri->segment(5)==="insert" || $this->uri->segment(3)==="insert")
+{
+	$edit->userid_created = new inputField("created_by", "created_by");
+	$edit->userid_created->value = $this->rapyd->auth->get_user_id();
+}
+elseif($this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify" || $this->uri->segment(5)==="update" || $this->uri->segment(3)==="update")
+{
+	$edit->userid_updated = new inputField("updated_by", "updated_by");
+	$edit->userid_updated->updateValue = $this->rapyd->auth->get_user_id();
+	$edit->userid_updated->type = "hidden";
+
+}
+/*user id log for insert and update*/
+
+//$edit->related->when = array("show","modify");
+//$edit->userid->style = "display=none";
+
+
+
+/* $edit->datefield = new dateField("Date", "datefield","eu");
+$edit->datefield->insertValue = date("Y-m-d");
+
+$edit->datetime = new dateField("Creation date", "created","d/m/Y H:i:s");  
+$edit->datetime->mode = "readonly";
+$edit->datetime->insertValue = date("Y-m-d H:i:s");  
+	
+	 
+ $edit->body = new editorField("Body", "body");
+    $edit->body->rule = "required";
+    $edit->body->rows = 10;    
+
+    $edit->author = new dropdownField("Author", "author_id");
+    $edit->author->option("","");
+    $edit->author->options("SELECT author_id, firstname FROM authors");
+
+    $r_uri = "crudusers/comments_grid/<#article_id#>/list";
+    $edit->related = new iframeField("related", $r_uri, "210");
+    $edit->related->when = array("show","modify");
+
+    $edit->checkbox = new checkboxField("Public", "public", "y","n");
+    
+    $edit->datefield = new dateField("Date", "datefield","eu"); */
+    
+    if ($this->uri->segment(4)==="1"){
+      $edit->buttons("modify", "save", "undo", "back", "delete");
+    } else {
+      $edit->buttons("modify", "save", "undo", "delete", "back");
+    }
+    
+    $edit->build();
+    $data["edit"] = $edit->output; //$data["jenisAhliCode"] . $data["title"] . $data["author"]
+     
+    //enddataedit//
+
+
+    $this->_render("dataedit", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"dataedit", "title"=>"dataedit"),
+                      array("file"=>THISFILE, "id"=>"commentsgrid", "title"=>"comments grid"),
+                      array("file"=>THISFILE, "id"=>"commentsedit", "title"=>"comments edit"),
+                    )
+                  );
+  }
+  else
+  {redirect("auth/login");}
+
+  }
+  
+
+}
+
+?>

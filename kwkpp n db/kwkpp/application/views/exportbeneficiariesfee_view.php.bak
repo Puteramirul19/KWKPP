@@ -1,0 +1,41 @@
+<div>
+<!-- <h3><?php echo $this->config->item('system_name'); ?></h3> -->
+<p class="mainheader">Senarai Bayaran Tukar Penama Diterima</p>
+
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="12cm" height="4cm" viewBox="0 0 1200 400"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example rect02 - rounded rectangles</desc>
+  <!-- Show outline of canvas using 'rect' element -->
+  <rect x="1" y="1" width="1198" height="398"
+        fill="none" stroke="blue" stroke-width="2"/>
+  <rect x="100" y="100" width="400" height="200" rx="50"
+        fill="green" />
+  <g transform="translate(700 210) rotate(-30)">
+    <rect x="0" y="0" width="400" height="200" rx="50"
+          fill="none" stroke="purple" stroke-width="30" />
+  </g>
+</svg>
+
+<?php
+
+echo form_open('exportbeneficiariesfee/mysql_excel');
+echo "<table>";
+
+echo "<tr><td class=\"littletableheader\" style=\"width:120px;\">Bulan</td><td>".form_dropdown('bulan',$bulan,date("m"), 'class="select"')."</td></tr>";
+echo "<tr><td class=\"littletableheader\">Tahun</td><td>".form_dropdown('tahun',$tahun,date("Y"), 'class="select"')."</td></tr>";
+echo "<tr><td class=\"littletableheader\">Nama Ahli</td><td>".form_dropdown('ahliKhairatID',$ahliKhairatID,'','class="select"')."</td></tr>";
+
+echo "</table>";
+
+
+?>
+
+<br />
+<input type="submit" value="Paparkan" />
+
+</form>
+
+</div>

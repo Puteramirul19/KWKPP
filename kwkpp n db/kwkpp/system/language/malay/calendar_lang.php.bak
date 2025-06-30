@@ -1,0 +1,49 @@
+<?php
+
+$lang['cal_su']			= "Su";
+$lang['cal_mo'] 		= "Mo";
+$lang['cal_tu'] 		= "Tu";
+$lang['cal_we'] 		= "We";
+$lang['cal_th'] 		= "Th";
+$lang['cal_fr'] 		= "Fr";
+$lang['cal_sa'] 		= "Sa";
+$lang['cal_sun'] 		= "Sun";
+$lang['cal_mon'] 		= "Mon";
+$lang['cal_tue'] 		= "Tue";
+$lang['cal_wed'] 		= "Wed";
+$lang['cal_thu'] 		= "Thu";
+$lang['cal_fri'] 		= "Fri";
+$lang['cal_sat'] 		= "Sat";
+$lang['cal_sunday']		= "Sunday";
+$lang['cal_monday']		= "Monday";
+$lang['cal_tuesday']	= "Tuesday";
+$lang['cal_wednesday']	= "Wednesday";
+$lang['cal_thursday']	= "Thursday";
+$lang['cal_friday']		= "Friday";
+$lang['cal_saturday']	= "Saturday";
+$lang['cal_jan'] 		= "Jan";
+$lang['cal_feb'] 		= "Feb";
+$lang['cal_mar'] 		= "Mac";
+$lang['cal_apr'] 		= "Apr";
+$lang['cal_may'] 		= "Mei";
+$lang['cal_jun'] 		= "Jun";
+$lang['cal_jul'] 		= "Jul";
+$lang['cal_aug'] 		= "Ogo";
+$lang['cal_sep'] 		= "Sep";
+$lang['cal_oct'] 		= "Okt";
+$lang['cal_nov'] 		= "Nov";
+$lang['cal_dec'] 		= "Dis";
+$lang['cal_january'] 	= "Januari";
+$lang['cal_february'] 	= "Februari";
+$lang['cal_march'] 		= "Mac";
+$lang['cal_april']		= "April";
+$lang['cal_mayl'] 		= "Mei";
+$lang['cal_june'] 		= "Jun";
+$lang['cal_july'] 		= "Julai";
+$lang['cal_august']		= "Ogos";
+$lang['cal_september']	= "September";
+$lang['cal_october'] 	= "Oktober";
+$lang['cal_november']	= "November";
+$lang['cal_december'] 	= "Disember";
+
+?>

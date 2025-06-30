@@ -1,0 +1,187 @@
+<html>
+<head>
+<title>Penyata Akaun</title>
+
+
+<table>
+<tr>
+<td align="">PENYATA AKAUN</td>
+</tr>
+</table>
+
+<table width="100%" border="0">
+  <tr> <!-- class="style15 style36" -->
+    <td><h2 align="right">PENYATA AKAUN</h2></td>
+  </tr>
+  <tr> 
+    <td height="25" class="style54">KUMPULAN WANG KHAIRAT PEKERJA DAN PESARA TNB <font size="-1">(8592-U)</font> </td>
+  </tr>
+  <tr> 
+    <td class="style53">Tingkat 10, TNB Ibu Pejabat No 129, Jalan Bangsar </td>
+  </tr>
+  <tr> 
+    <td class="style52"><span class="style29 style38">59200 Kuala Lumpur (Tel:03-229 66134 / 03-2296 6947) </span></td>
+  </tr>
+  <tr> 
+    <td><p><strong>_______________________________________________________________________________</strong></p>
+      <table width="100%" border="0">
+        <tr class="style53"> 
+          <td width="20%" height="20"><font size="2"><span class="style36">NO. AHLI</span></font></td>
+          <td width="5%"><div align="center" class="style36"><font size="2"><span class="style36">:</span></font></div></td>
+          <td width="75%"><div align="justify" class="style36"><font size="2"><span class="style36"><?php echo $noAhli ?></span></font></div></td>
+        </tr>
+        <tr class="style53"> 
+          <td height="20"><font size="2"><span class="style36">NO. PEKERJA</span></font></td>
+          <td><div align="center" class="style36"><font size="2"><span class="style36">:</span></font></div></td>
+          <td><div align="justify" class="style36"><font size="2"><span class="style36"><?php echo $noPekerja ?></span></font></div></td>
+        </tr>
+        <tr class="style53"> 
+          <td height="23"><font size="2"><span class="style36">NAMA</span></font></td>
+          <td><div align="center" class="style36"><font size="2"><span class="style36">:</span></font></div></td>
+          <td><div align="justify" class="style36"><font size="2"><span class="style36"><?php echo $nama ?></span></font></div></td>
+        </tr>
+      </table>
+      <strong>_______________________________________________________________________________</strong></td><br><br>
+  </tr>
+  <tr> 
+    <td><div align="center"> 
+        <h4 class="style38"><strong>PENYATA AKAUN SETAKAT TAHUN <?php echo $tahun ?></strong></h4>
+      </div></td>
+  </tr>
+  <tr> 
+    <td><table width="592" border="0" align="center">
+        <tr class="style54"> 
+          <td width="30" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Bil</font></div></td>
+          <td width="62" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Tarikh</font></div></td>
+          <td width="174" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Perkara</font></div></td>
+          <td width="39" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Ruj.</font></div></td>
+          <td width="86" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Debit(RM)</font></div></td>
+          <td width="100" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Kredit(RM)</font></div></td>
+          <td width="71" bgcolor="#000000"><div align="center" class="style56">              <font color="#FFFFFF" face="Century Gothic">Baki(RM)</font></div></td>
+        </tr>
+        <?php echo $insert_row ?> 
+        <tr> 
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>___________</td>
+        </tr>
+        <tr> 
+          <td><div align="center" class="style36 style28"><strong></strong></div></td>
+          <td><div align="center" class="style39"></div></td>
+          <td><div align="center" class="style39"></div></td>
+          <td><div align="center" class="style39"></div></td>
+          <td><div align="center" class="style39"></div></td>
+          <td><div align="center" class="style39"></div></td>
+          <td><div align="right" class="style39"><?php echo $baki ?>&nbsp;&nbsp;</div></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>===========</td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr> 
+    <td><font face="Century Gothic" class="style52">(SEMUA URUSNIAGA 
+          DALAM RINGGIT MALAYSIA)</font></td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<table width="89%" border="0">
+  <tr class="style36"> 
+    <td><font face="Century Gothic"><span class="style35 style52">Baki dibawa 
+      kehadapan </span></font></td>
+    <td bordercolor="#000000"><font face="Century Gothic"><span class="style35 style52">RM 
+      <?php echo $bakiBH ?> </span></font></td>
+  </tr>
+  <tr class="style36"> 
+    <td><font face="Century Gothic"><span class="style35 style52"><strong>(+)</strong> 
+      Jumlah keseluruhan bantuan kematian </span></font></td>
+    <td bordercolor="#000000"><font face="Century Gothic"><span class="style35 style52">RM 
+      <?php echo $mati ?></span></font></td>
+  </tr>
+  <tr class="style36"> 
+    <td><font face="Century Gothic"><span class="style35 style52"><strong>(-)</strong> 
+      Jumlah keseluruhan caruman bulanan</span></font></td>
+    <td bordercolor="#000000"><font face="Century Gothic"><span class="style35 style52">RM 
+      <?php echo $carumanBulanan ?></span></font></td>
+  </tr>
+  <tr class="style36"> 
+    <td><font face="Century Gothic"><span class="style35 style52">Baki setakat</span></font></td>
+    <td bordercolor="#000000"><font face="Century Gothic"><span class="style35 style52">RM 
+      <?php echo $bal ?></span></font></td>
+  </tr>
+  <tr> 
+    <td width="87%">&nbsp;</td>
+    <td width="13%">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<table width="83%" border="0">
+  <tr> 
+    <td width="130">&nbsp;</td>
+    <td width="147">&nbsp;</td>
+    <td width="135"><div align="center" class="style43"><font size="1">_________________________</font></div></td>
+    <td width="52"><font size="1">&nbsp;</font> </td>
+    <td width="123"><div align="center" class="style43"><font size="1">_____________________</font></div></td>
+    <td width="25">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">Disediakan 
+        oleh </font></div></td>
+    <td class="style36">&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">Disahkan 
+        oleh </font></div></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">'Nama'</font></div></td>
+    <td class="style36">&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">'Nama'</font></div></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">'Jawatan'</font></div></td>
+    <td class="style36">&nbsp;</td>
+    <td class="style36"><div align="center" class="style35 style36"><font size="1">'Jawatan'</font></div></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<table width="75%" border="0">
+  <tr> 
+    <td>_______________________________________________________________________________</td>
+  </tr>
+  <tr> 
+    <td height="40"><h6><span class="style50"><font face="Century Gothic">*Penyata ini adalah benar setakat tarikh seperti di atas. Sila rujuk kepada pihak kami untuk sebarang pertanyaan </font></span></h6></td>
+  </tr>
+  <tr> 
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
+ </head>
+
+</html>

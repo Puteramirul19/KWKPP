@@ -1,0 +1,16 @@
+<?php
+
+$lang['upload_userfile_not_set'] = "Tiada pembolehubah bernama userfile";//"Unable to find a post variable called userfile.";
+$lang['upload_file_exceeds_limit'] = "Saiz fail yang dimuat naik telah melebihi saiz fail maksimum yang dibenarkan";//"The uploaded file exceeds the maximum allowed size in your PHP configuration file";
+$lang['upload_file_partial'] = "Hanya sebahagian fail sahaja dapat dimuat naik";//"The file was only partially uploaded";
+$lang['upload_no_file_selected'] = "Anda tidak memilih fail yang hendak dimuat naik";//"You did not select a file to upload";
+$lang['upload_invalid_filetype'] = "Fail yang hendak dimuat naik adalah tidak dibenarkan";//"The filetype you are attempting to upload is not allowed";
+$lang['upload_invalid_filesize'] = "Saiz fail yang hendak dimuat naik adalah lebih besar dari saiz fail yang dibenarkan";//"The file you are attempting to upload is larger than the permitted size";
+$lang['upload_invalid_dimensions'] = "Imej yang hendak dimuat naik adalah melebihi saiz tinggi atau lebar maksimum";//"The image you are attempting to upload exceedes the maximum height or width";
+$lang['upload_destination_error'] = "Terdapat masalah apabila hendak mengubah lokasi fail yang telah dimuat naik";//"A problem was encountered while attempting to move the uploaded file to the final destination.";
+$lang['upload_no_filepath'] = "Lokasi muat naik tidak wujud";//"The upload path does not appear to be valid.";
+$lang['upload_no_file_types'] = "Anda tidak menetapkan jenis fail yang dibenarkan";//"You have not specified any allowed file types.";
+$lang['upload_bad_filename'] = "Nama fail yang hendak dimuat naik telah wujud";//"The file name you submitted already exists on the server.";
+$lang['upload_not_writable'] = "Folder muat naik tidak membenarkan sebarang penambahan fail baru";//"The upload destination folder does not appear to be writable.";
+
+?>

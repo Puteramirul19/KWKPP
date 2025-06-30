@@ -1,0 +1,234 @@
+<?php
+
+require_once('basecontroller.php');
+
+class Crudbeneficiaries extends BaseController {
+
+  var $data_type = null;   
+  var $data = null;
+
+
+	function Crudbeneficiaries()
+	{
+
+		parent::BaseController(); 
+
+	}
+
+
+
+  ##### index #####
+  function index()
+  {
+	if(is_logged() && get_role()<='3')
+	{
+		    
+    redirect("crudbeneficiaries/filteredgrid");
+
+	}else{redirect("auth/login");}
+  }
+
+
+
+  ##### callback test (for DataFilter + DataGrid) #####
+  function test($id,$const)
+  {
+    //callbacktest//
+    return $id*$const;
+    //endcallbacktest//
+  }
+
+
+
+  ##### DataFilter + DataGrid #####
+  function filteredgrid()
+  {
+	if(is_logged() && get_role()<='3')
+	{
+        
+    //filteredgrid//
+    
+    $this->rapyd->load("datafilter","datagrid");
+    
+    $this->rapyd->uri->keep_persistence();
+    
+    //filter
+    $filter = new DataFilter("Carian Penerima Faedah");
+    $filter->db->select("*");
+    $filter->db->from("kwkpp_penama");
+    $filter->db->join("kwkpp_hubungan","kwkpp_hubungan.hubunganID=kwkpp_penama.hubunganID","LEFT");
+	$filter->db->join("kwkpp_ahli_khairat","kwkpp_ahli_khairat.ahliKhairatID=kwkpp_penama.ahliKhairatID","LEFT");
+
+    $filter->noPekerja = new inputField("No IC Penama", "noICPenama");
+	//$filter->noPekerja->clause ="=";
+	$filter->noAhli = new inputField("Penama", "penama");
+    //$filter->noIC = new inputField("No IC", "noIC");
+    //$filter->active->option("","");
+    //$filter->active->options(array("y"=>"Yes","n"=>"No"));
+    
+    $filter->buttons("reset","search");
+    $filter->build();
+    
+
+    $uri = "crudbeneficiaries/dataedit/show/<#penamaID#>";
+    
+    //grid
+    $grid = new DataGrid("Senarai Penama");
+    //$grid->use_function("callback_test");
+    $grid->order_by("kwkpp_penama.ahliKhairatID","asc");
+    $grid->per_page = 25;
+    $grid->use_function("substr");
+    $grid->column_detail("Penama","penama", $uri);
+   // $grid->column_orderby("email","name","email");
+
+	$grid->column("No IC Penama","<#noICPenama#>");
+	$grid->column("Hubungan","<#hubunganDesc#>");
+    $grid->column("Bil Penama","noPenama");
+    //$grid->column("email","<#email#> <#lastlogin#>");
+	//$grid->column("active","<strtoupper><#active#></strtoupper>", "align=middle");
+    //$grid->column("callback test","<callback_test><#user_name#>|3</callback_test>");
+    
+    $grid->add("crudbeneficiaries/dataedit/create");
+    $grid->build();
+    /**/
+    $data["crud"] = $filter->output . $grid->output;
+    
+    //endfilteredgrid//
+    
+    
+    
+    $this->_render("crud", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"filteredgrid", "title"=>"Filtered Grid"),
+                     // array("file"=>THISFILE, "id"=>"callbacktest", "title"=>"Callback Test"),
+                    )
+                  );
+	}else{redirect("auth/login");}
+  }
+  
+  ##### dataedit #####
+  function dataedit()
+  {  
+	if(is_logged() && get_role()<='3')
+	{
+ 
+    if (($this->uri->segment(5)==="1") && ($this->uri->segment(4)==="do_delete")){
+      show_error("Please do not delete the first record, it's required by DataObject sample");
+    }
+  
+    //dataedit//
+    $this->rapyd->load("dataedit");
+	$this->load->model('Ahli_khairat_model');
+    $edit = new DataEdit("Penama", "kwkpp_penama");
+	//$edit->rel_one_to_one("kodJenisAhli", "kwkpp_jenis_ahli","jenisAhliID");
+
+    $edit->back_uri = "crudbeneficiaries/filteredgrid";
+
+/*
+	$edit->staticdd = new dropdownField("Public", "public");  
+    $edit->staticdd->option("y","Si");  
+    $edit->staticdd->option("n","No");  
+    $edit->staticdd->rule = "required";      
+      
+
+	$edit->dynamicdd = new dropdownField("Hubungan", "hubunganID");  
+    $edit->dynamicdd->option("","");  
+    $edit->dynamicdd->options("select hubunganID, concat(hubunganDesc, '>>', hubunganID) from kwkpp_hubungan");  
+    $edit->dynamicdd->onchange = "a_custom_javascript_function();";  
+*/	
+
+	$edit->ahliKhairatID = new dropdownField("Nama Ahli (No Pekerja)", "ahliKhairatID");
+    $edit->ahliKhairatID->option("","");
+    $edit->ahliKhairatID->options($this->Ahli_khairat_model->all_ahli_khairat());
+	$edit->ahliKhairatID->rule = "required";
+	if ($this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify" || $this->uri->segment(5)==="update" || $this->uri->segment(3)==="update")
+	{
+	$edit->ahliKhairatID->mode = "readonly";
+	}
+if(is_numeric($this->uri->segment(3)))
+	{$edit->ahliKhairatID->insertValue = $this->uri->segment(3);}
+	
+
+    $edit->penama = new inputField("Penama", "penama");
+    $edit->penama->rule = "trim|required|max_length[50]";
+
+	$edit->alamat01_ak = new inputField("Alamat", "alamat01_p");
+	$edit->alamat01_ak->rule = "trim|max_length[100]";
+
+	$edit->alamat02_ak = new inputField("", "alamat02_p");
+	$edit->alamat02_ak->rule = "trim|max_length[100]";
+
+	$edit->alamat03_ak = new inputField("", "alamat03_p");
+	$edit->alamat03_ak->rule = "trim|max_length[100]";
+
+	$edit->bandar_ak = new inputField("", "bandar_p");
+	$edit->bandar_ak->rule = "trim|max_length[50]";
+
+	$edit->poskod_ak = new inputField("Poskod", "poskod_p");
+	$edit->poskod_ak->rule = "trim|max_length[5]|numeric";
+
+	$edit->negeri_ak = new dropdownField("Negeri", "negeri_p");
+    $edit->negeri_ak->option("","");
+    $edit->negeri_ak->options("SELECT negeriCode, negeriDesc FROM kwkpp_negeri");
+
+	$edit->noICPenama = new inputField("No IC Penama", "noICPenama");
+    $edit->noICPenama->rule = "trim|required|max_length[14]";
+
+	$edit->hubunganID = new dropdownField("Hubungan", "hubunganID");
+    $edit->hubunganID->option("","");
+    $edit->hubunganID->options("SELECT hubunganID, hubunganDesc FROM kwkpp_hubungan");
+	$edit->hubunganID->rule = "required";
+
+	/*$edit->noPenama = new dropdownField("Bil Penama", "noPenama");
+    $edit->noPenama->option("","");
+    $edit->noPenama->options(array("1"=>"1","2"=>"2","3"=>"3","4"=>"4","5"=>"5","6"=>"6","7"=>"7","8"=>"8","9"=>"9","10"=>"10"));
+	$edit->noPenama->rule = "required";
+	*/
+	$edit->noPenama = new inputField("Bil Penama", "noPenama");
+    $edit->noPenama->rule = "trim|required|max_length[2]|numeric";
+
+	$edit->peratus = new inputField("Peratus", "peratus");
+    $edit->peratus->rule = "trim|required|numeric|max_length[3]";
+
+	$edit->noTelUtama = new inputField("No Tel Utama", "noTelUtama");
+    $edit->noTelUtama->rule = "max_length[11]";
+	
+	$edit->noTelBimbit = new inputField("No Tel Bimbit", "noTelBimbit");
+    $edit->noTelBimbit->rule = "max_length[11]";
+
+	$edit->email = new inputField("e-mail", "email");
+    $edit->email->rule = "valid_email|max_length[25]";
+    
+    if ($this->uri->segment(4)==="1"){
+      $edit->buttons("modify", "save", "undo", "back");
+    } else {
+      $edit->buttons("modify", "save", "undo", "delete", "back");
+    }
+
+    //$edit->use_function("callback_test");
+    //$edit->test = new freeField("Test", "test", "<callback_test><#user_id#>|3</callback_test>");
+    
+    
+    $edit->build();
+    $data["edit"] = $edit->output;
+     
+    //enddataedit//
+
+
+    $this->_render("dataedit", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"dataedit", "title"=>"dataedit"),
+                      array("file"=>THISFILE, "id"=>"commentsgrid", "title"=>"comments grid"),
+                      array("file"=>THISFILE, "id"=>"commentsedit", "title"=>"comments edit"),
+                    )
+                  );
+  }
+  else
+  {redirect("auth/login");}
+
+  }
+  
+
+}
+
+?>

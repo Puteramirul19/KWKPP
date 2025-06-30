@@ -1,0 +1,184 @@
+<?php
+
+require_once('basecontroller.php');
+
+class Crudstation extends BaseController {
+
+  var $data_type = null;   
+  var $data = null;
+
+
+	function Crudstation()
+	{
+
+		parent::BaseController(); 
+
+	}
+
+
+
+  ##### index #####
+  function index()
+  {
+	if(is_logged() && get_role()<='2')
+	{
+		    
+    redirect("crudstation/filteredgrid");
+
+	}else{redirect("auth/login");}
+  }
+
+
+
+  ##### callback test (for DataFilter + DataGrid) #####
+  function test($id,$const)
+  {
+    //callbacktest//
+    return $id*$const;
+    //endcallbacktest//
+  }
+
+
+
+  ##### DataFilter + DataGrid #####
+  function filteredgrid()
+  {
+	if(is_logged() && get_role()<='2')
+	{
+        
+    //filteredgrid//
+    
+    $this->rapyd->load("datafilter","datagrid");
+    
+    $this->rapyd->uri->keep_persistence();
+    
+    //filter
+    $filter = new DataFilter("Carian Stesen");
+    $filter->db->select("*");
+    $filter->db->from("kwkpp_stesen");
+    //$filter->db->join("authors","authors.author_id=articles.author_id","LEFT");
+
+    $filter->jenisStationCode = new inputField("Kod Stesen", "stesenCode");
+
+	$filter->bandar = new inputField("Bandar", "bandar");
+	    
+    $filter->buttons("reset","search");    
+    $filter->build();
+    
+
+    $uri = "crudstation/dataedit/show/<#stesenCode#>";
+    
+    //grid
+    $grid = new DataGrid("Senarai Stesen");
+    $grid->order_by("stesenCode","asc");
+    $grid->per_page = 25;
+    $grid->use_function("substr");
+
+	$grid->column_detail("Kod Stesen", "stesenCode", $uri);
+	$grid->column("Ketua Jabatan", "ketua_jabatan");
+    
+    $grid->add("crudstation/dataedit/create");
+    $grid->build();
+    /**/
+    $data["crud"] = $filter->output . $grid->output;
+    
+    //endfilteredgrid//
+    
+    
+    
+    $this->_render("crud", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"filteredgrid", "title"=>"Filtered Grid"),
+                    )
+                  );
+	}else{redirect("auth/login");}
+  }
+  
+  
+  
+
+
+  ##### dataedit #####
+  function dataedit()
+  {  
+	if(is_logged() && get_role()<='2')
+	{
+ 
+    if (($this->uri->segment(5)==="1") && ($this->uri->segment(4)==="do_delete")){
+      show_error("Please do not delete the first record, it's required by DataObject sample");
+    }
+  
+    //dataedit//
+    $this->rapyd->load("dataedit");
+
+    $edit = new DataEdit("Stesen", "kwkpp_stesen");
+    $edit->back_uri = "crudstation/filteredgrid";
+
+	$edit->stesenCode = new inputField("Kod Stesen", "stesenCode");
+    $edit->stesenCode->rule = "trim|required|max_length[5]";
+	if ($this->uri->segment(5)==="modify" || $this->uri->segment(3)==="modify" || $this->uri->segment(5)==="update" || $this->uri->segment(3)==="update")
+	{
+	$edit->stesenCode->mode = "readonly";
+	}
+
+    $edit->stesenName = new inputField("Nama Stesen", "stesenName");
+    $edit->stesenName->rule = "trim|required|max_length[15]";
+
+    /*
+	$edit->stesenDesc = new inputField("Penerangan Stesen", "stesenDesc");
+    $edit->stesenDesc->rule = "trim|max_length[25]";
+    */
+
+	$edit->ketuaStesen = new inputField("Ketua Stesen", "ketua_jabatan");
+	$edit->ketuaStesen->rule = "trim|max_length[100]";
+	
+	$edit->alamat01 = new inputField("Alamat", "alamat01");
+	$edit->alamat01->rule = "trim|max_length[100]";
+
+	$edit->alamat02 = new inputField("", "alamat02");
+	$edit->alamat02->rule = "trim|max_length[100]";
+
+	$edit->alamat03 = new inputField("", "alamat03");
+	$edit->alamat03->rule = "trim|max_length[100]";
+
+	$edit->bandar = new inputField("Bandar", "bandar");
+	$edit->bandar->rule = "trim|max_length[50]";
+
+	$edit->poskod = new inputField("Poskod", "poskod");
+	$edit->poskod->rule = "trim|max_length[5]|numeric";
+
+	$edit->negeri = new dropdownField("Negeri", "negeri");
+    $edit->negeri->option("","");
+    $edit->negeri->options("SELECT negeriCode, negeriDesc FROM kwkpp_negeri");
+
+    if ($this->uri->segment(4)==="1"){
+      $edit->buttons("modify", "save", "undo", "back");
+    } else {
+      $edit->buttons("modify", "save", "undo", "delete", "back");
+    }
+
+    //$edit->use_function("callback_test");
+    //$edit->test = new freeField("Test", "test", "<callback_test><#user_id#>|3</callback_test>");
+    
+    
+    $edit->build();
+    $data["edit"] = $edit->output;
+     
+    //enddataedit//
+
+    $this->_render("dataedit", $data, 
+                    array(
+                      array("file"=>THISFILE, "id"=>"dataedit", "title"=>"dataedit"),
+
+                    )
+                  );
+  }
+  else
+  {redirect("auth/login");}
+
+  }
+  
+
+}
+
+?>
